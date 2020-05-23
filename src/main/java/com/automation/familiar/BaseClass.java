@@ -1,26 +1,37 @@
 package com.automation.familiar;
 
-import io.appium.java_client.android.AndroidDriver;
-import io.appium.java_client.android.AndroidElement;
+import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.ios.IOSDriver;
 import io.appium.java_client.remote.MobileCapabilityType;
 import io.appium.java_client.remote.MobilePlatform;
+import io.appium.java_client.service.local.AppiumDriverLocalService;
 
+import java.io.File;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.TimeZone;
 
+
+
+
+
+import org.apache.commons.io.FileUtils;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
+import org.testng.annotations.Test;
 
 import com.relevantcodes.extentreports.ExtentReports;
 import com.relevantcodes.extentreports.ExtentTest;
+import com.relevantcodes.extentreports.LogStatus;
 
 public class BaseClass {
 	
@@ -30,57 +41,86 @@ public class BaseClass {
 	public static Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("IST"));
 	 public static String currentDate = new SimpleDateFormat("dd-MM-yyyy").format(cal.getTime());
 
+	 public static String screenshotpath= System.getProperty("user.dir") +"//Screenshots//Screenshot_" + currentDate + ".png";
 	public static ExtentReports report =new ExtentReports(location+"//Reports//TestReport_" + currentDate + ".html");
 	public  static ExtentTest logger = null;
 	public static DesiredCapabilities cap = new DesiredCapabilities();
-	
-@SuppressWarnings("rawtypes")
-public static WebDriver plateformSelection(String plateformName, String browserName) throws MalformedURLException
+	public static String url = obj.getCellData("Preference", "URL", 2);
+	public static WebDriver driver = null;
+
+
+
+public static WebDriver plateformSelection(String plateformName, String browserName) throws MalformedURLException, InterruptedException
 {
-	WebDriver driver = null;
+	
+//	logger=report.startTest("Home Page Testing");
 	switch(plateformName)
 	{
 	case "Android": 
-		 
 	        cap.setCapability(MobileCapabilityType.PLATFORM_NAME,MobilePlatform.ANDROID);
-	        cap.setCapability(MobileCapabilityType.PLATFORM_VERSION,"R");
-	        cap.setCapability(MobileCapabilityType.DEVICE_NAME, "emulator-5554");
-	        cap.setCapability(MobileCapabilityType.BROWSER_NAME, "Chrome");
+	        cap.setCapability(MobileCapabilityType.PLATFORM_VERSION,obj.getCellData("System", "Version", 2));
+//	        cap.setCapability(MobileCapabilityType.AUTOMATION_NAME, "AndroidTest");
+	        cap.setCapability(MobileCapabilityType.DEVICE_NAME,obj.getCellData("System", "Name", 2));
+	        cap.setCapability(MobileCapabilityType.BROWSER_NAME,obj.getCellData("System", "Browser", 2));
 	        cap.setCapability(MobileCapabilityType.NEW_COMMAND_TIMEOUT, 60);
-	        driver = new RemoteWebDriver(new URL("http://0.0.0.0:4723/wd/hub"),cap);
-	        driver.get("https://Familiar.Lsac.org");
+	        driver = new RemoteWebDriver(new URL(obj.getCellData("System", "Driver", 2)),cap);
+	        driver.get(url);
+	        
 		break;
 	case "iPhone":
 		 	cap.setCapability(MobileCapabilityType.PLATFORM_NAME,MobilePlatform.IOS);
-		 	cap.setCapability(MobileCapabilityType.PLATFORM_VERSION,"13.2");
-	        cap.setCapability(MobileCapabilityType.DEVICE_NAME, "iPhone 8");
-	        cap.setCapability(MobileCapabilityType.BROWSER_NAME, "safari");
-	        cap.setCapability(MobileCapabilityType.NEW_COMMAND_TIMEOUT, 60);
-		driver = new IOSDriver(new URL("http://0.0.0.0:4723/wd/hub"),cap);
-		driver.get("https://Familiar.Lsac.org");
+		 	cap.setCapability(MobileCapabilityType.PLATFORM_VERSION,obj.getCellData("System", "Version", 3));
+//		 	cap.setCapability(MobileCapabilityType.AUTOMATION_NAME, "XCUITest");
+		 	cap.setCapability(MobileCapabilityType.DEVICE_NAME,obj.getCellData("System", "Name", 3));
+		 	  cap.setCapability(MobileCapabilityType.BROWSER_NAME,obj.getCellData("System", "Browser", 3));
+		 	cap.setCapability("SafariGarbageCollect", true);
+	        cap.setCapability(MobileCapabilityType.NEW_COMMAND_TIMEOUT, 1000); 
+		driver = new IOSDriver(new URL(obj.getCellData("System", "Driver", 2)),cap);
+	
+		driver.get(url);
+		
 		break;
 	case "Desktop" :
 		switch(browserName)
 		{
-		case "chrome" :
+		case "Chrome" :
 			System.setProperty("webdriver.chrome.driver", "chromedriver 4");
-//			ChromeDriverManager.getInstance().setup();
 			driver = new ChromeDriver();
-			driver.get("https://Familiar.Lsac.org");
+			driver.get(url);
+		
 			break;
-		case "firefox":
+		case "Firefox":
 			driver = new FirefoxDriver();
-			driver.get("Familiar.Lsac.org");
+			driver.get(url);
 			break;
 		case "IE":
 			driver = new InternetExplorerDriver();
-			driver.get("Familiar.Lsac.org");
+			driver.get(url);
 			break;
 		}
 		
 	}
+	
 	return driver;
 	
+}
+public static String createScreenshot(){
+	 
+    // generate screenshot as a file object
+
+    File scrFile = ((TakesScreenshot)driver).getScreenshotAs(OutputType.FILE);
+    try {
+        // copy file object to designated location
+    	
+        FileUtils.copyFile(scrFile, new File(screenshotpath));
+       
+        
+    } catch (IOException e) {
+        System.out.println("Error while generating screenshot:\n" + e.toString());
+    }
+	return screenshotpath;
+	
+  
 }
 
 }

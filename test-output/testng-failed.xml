@@ -1,13 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
-<suite guice-stage="DEVELOPMENT" name="Failed suite [Default suite]">
-  <test thread-count="5" name="Default test(failed)">
+<suite guice-stage="DEVELOPMENT" name="Failed suite [Suite]">
+  <listeners>
+    <listener class-name="com.automation.familiar.ExtentReporterNG"/>
+  </listeners>
+  <test thread-count="5" name="Test(failed)">
     <classes>
-      <class name="com.automation.familiar.TestCase_Title">
+      <class name="com.automation.familiar.InvalidLogin">
         <methods>
-          <include name="loginTestcase"/>
+          <include name="Invalidlogin"/>
         </methods>
-      </class> <!-- com.automation.familiar.TestCase_Title -->
+      </class> <!-- com.automation.familiar.InvalidLogin -->
     </classes>
-  </test> <!-- Default test(failed) -->
-</suite> <!-- Failed suite [Default suite] -->
+  </test> <!-- Test(failed) -->
+</suite> <!-- Failed suite [Suite] -->

@@ -3,11 +3,11 @@
 <suite guice-stage="DEVELOPMENT" name="Failed suite [Default suite]">
   <test thread-count="5" name="Default test(failed)">
     <classes>
-      <class name="com.automation.familiar.TestCase_Title">
+      <class name="com.automation.familiar.HomePageLoad">
         <methods>
-          <include name="loginTestcase"/>
+          <include name="homePageLoad"/>
         </methods>
-      </class> <!-- com.automation.familiar.TestCase_Title -->
+      </class> <!-- com.automation.familiar.HomePageLoad -->
     </classes>
   </test> <!-- Default test(failed) -->
 </suite> <!-- Failed suite [Default suite] -->
